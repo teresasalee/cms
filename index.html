@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>長照2.0 模擬照顧管理評估表</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      line-height: 1.6;
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    .question {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin: 0.25rem 0;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .result {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #eafaf1;
+      border-left: 4px solid #2ecc71;
+    }
+  </style>
+</head>
+<body>
+  <h1>長照2.0 模擬照顧管理評估表</h1>
+  <form id="cmsForm">
+
+    <!-- 基本資料 -->
+    <div class="question">
+      <label><strong>A1. 個案婚姻狀況：</strong></label>
+      <label><input type="radio" name="marital" value="離婚"> 離婚</label>
+      <label><input type="radio" name="marital" value="分居"> 分居</label>
+      <label><input type="radio" name="marital" value="喪偶"> 喪偶</label>
+      <label><input type="radio" name="marital" value="已婚"> 已婚</label>
+      <label><input type="radio" name="marital" value="未婚"> 未婚</label>
+    </div>
+    <div class="question">
+      <label><strong>A2. 教育程度：</strong></label>
+      <label><input type="radio" name="education" value="不識字"> 不識字</label>
+      <label><input type="radio" name="education" value="國小"> 國小</label>
+      <label><input type="radio" name="education" value="國中"> 國中</label>
+      <label><input type="radio" name="education" value="高中"> 高中</label>
+      <label><input type="radio" name="education" value="大學以上"> 大學以上</label>
+    </div>
+
+    <!-- 意識狀態 -->
+    <div class="question">
+      <label><strong>C1. 意識狀態：</strong></label>
+      <label><input type="radio" name="consciousness" value="清醒"> 清醒</label>
+      <label><input type="radio" name="consciousness" value="嗜睡"> 嗜睡</label>
+      <label><input type="radio" name="consciousness" value="混亂"> 混亂</label>
+      <label><input type="radio" name="consciousness" value="呆滯"> 呆滯</label>
+      <label><input type="radio" name="consciousness" value="昏迷"> 昏迷</label>
+    </div>
+
+    <!-- ADL -->
+    <h2>日常生活活動能力 (ADL)</h2>
+    <div class="adl"></div>
+
+    <!-- IADL -->
+    <h2>工具性日常活動能力 (IADL)</h2>
+    <div class="question">
+      <label><strong>F1. 使用電話：</strong></label>
+      <label><input type="radio" name="iadl1" value="1"> 能獨立使用電話</label>
+      <label><input type="radio" name="iadl1" value="2"> 只能撥熟悉的號碼</label>
+      <label><input type="radio" name="iadl1" value="3"> 只能接電話</label>
+      <label><input type="radio" name="iadl1" value="4"> 完全不能使用</label>
+    </div>
+    <div class="question">
+      <label><strong>F2. 購物能力：</strong></label>
+      <label><input type="radio" name="iadl2" value="1"> 可獨立購物</label>
+      <label><input type="radio" name="iadl2" value="2"> 只能購買日常用品</label>
+      <label><input type="radio" name="iadl2" value="3"> 需他人陪同</label>
+      <label><input type="radio" name="iadl2" value="4"> 完全無法購物</label>
+    </div>
+
+    <!-- 疾病史 -->
+    <h2>疾病史（複選）</h2>
+    <div class="question">
+      <label><input type="checkbox" name="disease" value="高血壓"> 高血壓</label>
+      <label><input type="checkbox" name="disease" value="糖尿病"> 糖尿病</label>
+      <label><input type="checkbox" name="disease" value="中風"> 中風</label>
+      <label><input type="checkbox" name="disease" value="失智症"> 失智症</label>
+      <label><input type="checkbox" name="disease" value="憂鬱症"> 憂鬱症</label>
+      <label><input type="checkbox" name="disease" value="無疾病"> 無明確疾病</label>
+    </div>
+
+    <!-- 提交按鈕 -->
+    <button type="button" onclick="submitForm()">提交評估</button>
+  </form>
+
+  <div class="result" id="result" style="display:none;"></div>
+
+  <script>
+    window.onload = () => {
+      const adlBlock = document.querySelector(".adl");
+      const adlQuestions = [
+        "吃飯", "洗澡", "個人修飾", "穿脫衣物", "大便控制", "小便控制",
+        "上廁所", "移位", "走路", "上下樓梯"
+      ];
+      adlQuestions.forEach((text, idx) => {
+        const name = `adl${idx + 1}`;
+        const div = document.createElement("div");
+        div.classList.add("question");
+        div.innerHTML = `
+          <label><strong>E${idx + 1}. ${text}：</strong></label>
+          <label><input type="radio" name="${name}" value="1"> 可自理</label>
+          <label><input type="radio" name="${name}" value="2"> 需部分協助</label>
+          <label><input type="radio" name="${name}" value="3"> 完全依賴</label>
+        `;
+        adlBlock.appendChild(div);
+      });
+    };
+
+    function submitForm() {
+      let adlScore = 0;
+      let unanswered = 0;
+      for (let i = 1; i <= 10; i++) {
+        const val = document.querySelector(`input[name='adl${i}']:checked`);
+        if (val) adlScore += parseInt(val.value);
+        else unanswered++;
+      }
+      if (unanswered > 0) {
+        alert(`請填完 ADL 所有題目，尚有 ${unanswered} 題未填`);
+        return;
+      }
+      let level = adlScore <= 13 ? "CMS 第8級以上" : adlScore <= 20 ? "CMS 第6~7級" : "不符合補助";
+      document.getElementById("result").innerHTML =
+        `ADL 總分：${adlScore}，初步研判：<strong>${level}</strong>`;
+      document.getElementById("result").style.display = "block";
+    }
+  </script>
+</body>
+</html>
